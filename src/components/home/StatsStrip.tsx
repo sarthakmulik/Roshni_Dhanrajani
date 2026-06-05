@@ -12,6 +12,7 @@ export function StatsStrip() {
       <div className="container">
         <div className="gold-rule" />
         <div
+          className="stats-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
@@ -66,6 +67,8 @@ export function StatsStrip() {
       <style>{`
         @media (max-width: 640px) {
           .stats-grid { grid-template-columns: 1fr !important; }
+          .stats-grid > div { border-right: none !important; border-bottom: 1px solid rgba(200,168,130,0.25); }
+          .stats-grid > div:last-child { border-bottom: none !important; }
         }
       `}</style>
     </section>

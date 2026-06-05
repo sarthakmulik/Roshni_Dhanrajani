@@ -247,7 +247,7 @@ export function BlogPostPage() {
 
         {/* Related Posts */}
         {related.length > 0 && (
-          <section style={{ background: 'var(--color-white)', padding: '60px 40px 80px', borderTop: '1px solid var(--color-soft)' }}>
+          <section style={{ background: 'var(--color-white)', padding: '60px 0 80px', borderTop: '1px solid var(--color-soft)' }}>
             <div className="container">
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '36px' }}>
                 <div style={{ width: '24px', height: '1px', background: 'var(--color-primary)' }} />
@@ -292,9 +292,6 @@ export function BlogPostPage() {
 
         <style>{`
           @keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-          @media (max-width: 640px) {
-            section { padding-left: 20px !important; padding-right: 20px !important; }
-          }
         `}</style>
       </main>
     </PageTransition>

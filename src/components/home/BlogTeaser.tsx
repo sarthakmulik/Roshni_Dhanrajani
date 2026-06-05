@@ -30,7 +30,7 @@ export function BlogTeaser() {
   if (loading || posts.length === 0) return null
 
   return (
-    <section style={{ background: 'var(--color-bg)', padding: '80px 40px', borderTop: '1px solid var(--color-soft)' }}>
+    <section style={{ background: 'var(--color-bg)', padding: '80px 0', borderTop: '1px solid var(--color-soft)' }}>
       <div className="container">
         {/* Section Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '40px', flexWrap: 'wrap', gap: '12px' }}>
@@ -150,7 +150,6 @@ export function BlogTeaser() {
           .blog-teaser-grid {
             grid-template-columns: 1fr;
           }
-          section { padding-left: 20px !important; padding-right: 20px !important; }
         }
       `}</style>
     </section>

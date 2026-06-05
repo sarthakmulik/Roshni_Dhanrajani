@@ -233,7 +233,7 @@ export function BlogPage() {
         <section
           style={{
             background: 'var(--color-text)',
-            padding: '80px 40px 64px',
+            padding: '80px 0 64px',
             textAlign: 'center',
           }}
         >
@@ -263,7 +263,7 @@ export function BlogPage() {
         </section>
 
         {/* Filter Bar */}
-        <section style={{ background: 'var(--color-white)', borderBottom: '1px solid var(--color-soft)', padding: '20px 40px', position: 'sticky', top: '72px', zIndex: 10 }}>
+        <section style={{ background: 'var(--color-white)', borderBottom: '1px solid var(--color-soft)', padding: '20px 0', position: 'sticky', top: '72px', zIndex: 10 }}>
           <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
             {/* Search */}
             <div style={{ position: 'relative', flex: '0 0 260px' }}>
@@ -320,7 +320,7 @@ export function BlogPage() {
         </section>
 
         {/* Grid */}
-        <section style={{ background: 'var(--color-bg)', padding: '60px 40px 80px' }}>
+        <section style={{ background: 'var(--color-bg)', padding: '60px 0 80px' }}>
           <div className="container">
             {loading ? (
               <div className="blog-grid">
@@ -357,7 +357,6 @@ export function BlogPage() {
           }
           @media (max-width: 640px) {
             .blog-grid { grid-template-columns: 1fr; }
-            section { padding-left: 20px !important; padding-right: 20px !important; }
           }
           @keyframes skeleton-pulse {
             0%, 100% { opacity: 1; }

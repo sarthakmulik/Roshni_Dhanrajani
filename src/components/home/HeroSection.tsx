@@ -86,7 +86,7 @@ export function HeroSection() {
 
       {/* Content */}
       <div
-        className="container"
+        className="container hero-grid"
         style={{
           position: 'relative',
           zIndex: 2,
