@@ -119,7 +119,7 @@ export function Footer() {
               Connect
             </span>
             {[
-              { icon: <Camera size={20} />, label: 'Instagram', href: 'https://instagram.com' },
+              { icon: <Camera size={20} />, label: 'Instagram', href: 'https://www.instagram.com/roshni.dhanrajani/' },
               { icon: <MessageCircle size={20} />, label: 'WhatsApp', href: 'https://wa.me' },
               { icon: <Play size={20} />, label: 'YouTube', href: 'https://youtube.com' },
             ].map((social) => (

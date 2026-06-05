@@ -32,7 +32,7 @@ export function GalleryStrip() {
             </span>
           </div>
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/roshni.dhanrajani/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -46,7 +46,7 @@ export function GalleryStrip() {
               paddingBottom: '2px',
             }}
           >
-            @pulseitout →
+            @roshni.dhanrajani →
           </a>
         </div>
       </div>
