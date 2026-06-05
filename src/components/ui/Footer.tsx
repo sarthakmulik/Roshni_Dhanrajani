@@ -75,6 +75,7 @@ export function Footer() {
             {[
               { label: 'Home', href: '/' },
               { label: 'Events', href: '/events' },
+              { label: 'Journal', href: '/journal' },
               { label: 'About', href: '/#about' },
               { label: 'Book a Session', href: '/events' },
               { label: 'Admin', href: '/admin' },

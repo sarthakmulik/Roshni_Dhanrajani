@@ -27,6 +27,11 @@ import { AdminEventsPage } from '@/pages/admin/EventsManagePage'
 import { AdminBookingsPage } from '@/pages/admin/BookingsPage'
 import { AdminTestimonialsPage } from '@/pages/admin/TestimonialsPage'
 import { AdminSettingsPage } from '@/pages/admin/SettingsPage'
+import { AdminBlogPage } from '@/pages/admin/BlogPage'
+
+// Blog / Journal
+import { BlogPage } from '@/pages/BlogPage'
+import { BlogPostPage } from '@/pages/BlogPostPage'
 
 // Public layout (with navbar + footer) using Outlet for clean Layout Routing
 function PublicLayout() {
@@ -77,6 +82,8 @@ export default function App() {
           <Route element={<PublicLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/events" element={<EventsPage />} />
+            <Route path="/journal" element={<BlogPage />} />
+            <Route path="/journal/:slug" element={<BlogPostPage />} />
             <Route path="/book/:eventId" element={<BookingPage />} />
             <Route path="/book" element={<BookingPage />} />
             <Route
@@ -127,6 +134,14 @@ export default function App() {
             element={
               <AdminGuard>
                 <AdminTestimonialsPage />
+              </AdminGuard>
+            }
+          />
+          <Route
+            path="/admin/blog"
+            element={
+              <AdminGuard>
+                <AdminBlogPage />
               </AdminGuard>
             }
           />

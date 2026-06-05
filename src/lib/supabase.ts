@@ -58,3 +58,16 @@ export interface Testimonial {
   is_featured: boolean
   created_at: string
 }
+
+export interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string | null
+  body: string
+  cover_url: string | null
+  category: string
+  read_time_minutes: number
+  is_published: boolean
+  created_at: string
+}

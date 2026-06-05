@@ -247,3 +247,68 @@ CREATE POLICY "Testimonials: Public read featured" ON public.testimonials
 
 CREATE POLICY "Testimonials: Admin full access" ON public.testimonials
   FOR ALL USING (public.check_is_admin(auth.uid()));
+
+-- =============================================
+-- BLOG POSTS TABLE
+-- =============================================
+CREATE TABLE IF NOT EXISTS public.blog_posts (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  excerpt TEXT,
+  body TEXT NOT NULL,
+  cover_url TEXT,
+  category TEXT DEFAULT 'Wellness',
+  read_time_minutes INT DEFAULT 3,
+  is_published BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public can read published posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Admins can manage all posts" ON public.blog_posts;
+
+CREATE POLICY "Public can read published posts" ON public.blog_posts
+  FOR SELECT USING (is_published = true);
+
+CREATE POLICY "Admins can manage all posts" ON public.blog_posts
+  FOR ALL USING (public.check_is_admin(auth.uid()));
+
+-- =============================================
+-- STORAGE BUCKETS & POLICIES (BLOG COVERS)
+-- =============================================
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('blog-covers', 'blog-covers', true)
+ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS "Public Access" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can upload blog covers" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can update blog covers" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can delete blog covers" ON storage.objects;
+
+CREATE POLICY "Public Access" ON storage.objects
+  FOR SELECT USING (bucket_id = 'blog-covers');
+
+CREATE POLICY "Admins can upload blog covers" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'blog-covers' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
+CREATE POLICY "Admins can update blog covers" ON storage.objects
+  FOR UPDATE USING (
+    bucket_id = 'blog-covers' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
+CREATE POLICY "Admins can delete blog covers" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'blog-covers' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
