@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Plus, Edit2, Trash2, Star, X, Check } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Plus, Edit2, Trash2, Star, X, Check, Upload, Image as ImageIcon } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { supabase, type Testimonial } from '@/lib/supabase'
 import { AdminLayout } from '@/components/admin/AdminLayout'
@@ -23,6 +23,42 @@ function TestimonialModal({
 }) {
   const [form, setForm] = useState<Partial<Testimonial>>(testimonial || emptyForm)
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be under 5MB')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const ext = file.name.split('.').pop()
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('testimonial-photos')
+        .upload(filename, file, { upsert: false, contentType: file.type })
+
+      if (uploadError) throw uploadError
+
+      const { data: urlData } = supabase.storage.from('testimonial-photos').getPublicUrl(filename)
+      update('photo_url', urlData.publicUrl)
+      toast.success('Image uploaded!')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
 
   const update = (key: keyof Testimonial, val: unknown) =>
     setForm((prev) => ({ ...prev, [key]: val }))
@@ -110,9 +146,55 @@ function TestimonialModal({
 
           <div>
             <label style={{ display: 'block', fontFamily: 'var(--font-heading)', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(44,36,32,0.5)', marginBottom: '6px' }}>
-              Photo URL
+              Photo Image
             </label>
-            <input style={inputStyle} value={form.photo_url || ''} onChange={(e) => update('photo_url', e.target.value)} placeholder="https://..." />
+            <div
+              style={{
+                border: '2px dashed var(--color-soft)',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                position: 'relative',
+                minHeight: '120px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#fafafa',
+                cursor: 'pointer',
+              }}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {form.photo_url ? (
+                <div style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '50%', overflow: 'hidden' }}>
+                  <img src={form.photo_url} alt="photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(44,36,32,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', opacity: 0, transition: 'opacity 0.2s ease' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '0')}
+                  >
+                    <Upload size={14} color="white" />
+                    <span style={{ color: 'white', fontFamily: 'var(--font-heading)', fontSize: '0.55rem', fontWeight: 600 }}>Replace</span>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px', color: 'rgba(44,36,32,0.4)' }}>
+                  {uploading ? (
+                    <div className="spinner" style={{ width: '20px', height: '20px' }} />
+                  ) : (
+                    <>
+                      <ImageIcon size={24} />
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem' }}>
+                        Click to upload photo (max 5MB)
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoUpload} />
+            </div>
+            {form.photo_url && (
+              <button onClick={() => update('photo_url', '')} style={{ marginTop: '6px', fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: '#E74C3C', background: 'none', border: 'none', cursor: 'pointer' }}>
+                Remove image
+              </button>
+            )}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

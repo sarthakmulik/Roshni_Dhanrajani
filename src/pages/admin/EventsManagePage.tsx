@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Plus, Edit2, Trash2, X, Check, ToggleLeft, ToggleRight } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Plus, Edit2, Trash2, X, Check, ToggleLeft, ToggleRight, Upload, Image as ImageIcon } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { supabase, type Event } from '@/lib/supabase'
 import { AdminLayout } from '@/components/admin/AdminLayout'
@@ -27,6 +27,42 @@ function EventModal({
 }) {
   const [form, setForm] = useState<Partial<Event>>(event || emptyForm)
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be under 5MB')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const ext = file.name.split('.').pop()
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('event-thumbnails')
+        .upload(filename, file, { upsert: false, contentType: file.type })
+
+      if (uploadError) throw uploadError
+
+      const { data: urlData } = supabase.storage.from('event-thumbnails').getPublicUrl(filename)
+      update('thumbnail_url', urlData.publicUrl)
+      toast.success('Image uploaded!')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
 
   const update = (key: keyof Event, val: unknown) =>
     setForm((prev) => ({ ...prev, [key]: val }))
@@ -140,8 +176,54 @@ function EventModal({
           </div>
 
           <div style={{ gridColumn: 'span 2' }}>
-            <label style={labelStyle}>Thumbnail URL</label>
-            <input style={inputStyle} value={form.thumbnail_url || ''} onChange={(e) => update('thumbnail_url', e.target.value)} placeholder="https://..." />
+            <label style={labelStyle}>Thumbnail Image</label>
+            <div
+              style={{
+                border: '2px dashed var(--color-soft)',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                position: 'relative',
+                minHeight: '120px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#fafafa',
+                cursor: 'pointer',
+              }}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {form.thumbnail_url ? (
+                <>
+                  <img src={form.thumbnail_url} alt="thumbnail" style={{ width: '100%', maxHeight: '180px', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(44,36,32,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: 0, transition: 'opacity 0.2s ease' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '0')}
+                  >
+                    <Upload size={22} color="white" />
+                    <span style={{ color: 'white', fontFamily: 'var(--font-heading)', fontSize: '0.72rem', fontWeight: 600 }}>Replace Image</span>
+                  </div>
+                </>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', padding: '24px', color: 'rgba(44,36,32,0.4)' }}>
+                  {uploading ? (
+                    <div className="spinner" style={{ width: '24px', height: '24px' }} />
+                  ) : (
+                    <>
+                      <ImageIcon size={28} />
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem' }}>
+                        Click to upload thumbnail image (max 5MB)
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleThumbnailUpload} />
+            </div>
+            {form.thumbnail_url && (
+              <button onClick={() => update('thumbnail_url', '')} style={{ marginTop: '6px', fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: '#E74C3C', background: 'none', border: 'none', cursor: 'pointer' }}>
+                Remove image
+              </button>
+            )}
           </div>
         </div>
 

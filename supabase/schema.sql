@@ -277,20 +277,51 @@ CREATE POLICY "Admins can manage all posts" ON public.blog_posts
   FOR ALL USING (public.check_is_admin(auth.uid()));
 
 -- =============================================
--- STORAGE BUCKETS & POLICIES (BLOG COVERS)
+-- STORAGE BUCKETS & POLICIES (WEBSITE MEDIA)
 -- =============================================
+
+-- 1. Create Buckets
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('blog-covers', 'blog-covers', true)
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('event-thumbnails', 'event-thumbnails', true)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('testimonial-photos', 'testimonial-photos', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 2. Drop existing policies to prevent conflicts on re-run
 DROP POLICY IF EXISTS "Public Access" ON storage.objects;
+DROP POLICY IF EXISTS "Public Select Blog Covers" ON storage.objects;
+DROP POLICY IF EXISTS "Public Select Event Thumbnails" ON storage.objects;
+DROP POLICY IF EXISTS "Public Select Testimonial Photos" ON storage.objects;
+
 DROP POLICY IF EXISTS "Admins can upload blog covers" ON storage.objects;
 DROP POLICY IF EXISTS "Admins can update blog covers" ON storage.objects;
 DROP POLICY IF EXISTS "Admins can delete blog covers" ON storage.objects;
 
-CREATE POLICY "Public Access" ON storage.objects
+DROP POLICY IF EXISTS "Admins can upload event thumbnails" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can update event thumbnails" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can delete event thumbnails" ON storage.objects;
+
+DROP POLICY IF EXISTS "Admins can upload testimonial photos" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can update testimonial photos" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can delete testimonial photos" ON storage.objects;
+
+-- 3. Public READ (SELECT) Policies
+CREATE POLICY "Public Select Blog Covers" ON storage.objects
   FOR SELECT USING (bucket_id = 'blog-covers');
 
+CREATE POLICY "Public Select Event Thumbnails" ON storage.objects
+  FOR SELECT USING (bucket_id = 'event-thumbnails');
+
+CREATE POLICY "Public Select Testimonial Photos" ON storage.objects
+  FOR SELECT USING (bucket_id = 'testimonial-photos');
+
+-- 4. Admin WRITE (INSERT/UPDATE/DELETE) Policies for blog-covers
 CREATE POLICY "Admins can upload blog covers" ON storage.objects
   FOR INSERT WITH CHECK (
     bucket_id = 'blog-covers' AND
@@ -311,4 +342,49 @@ CREATE POLICY "Admins can delete blog covers" ON storage.objects
     auth.role() = 'authenticated' AND
     public.check_is_admin(auth.uid())
   );
+
+-- 5. Admin WRITE (INSERT/UPDATE/DELETE) Policies for event-thumbnails
+CREATE POLICY "Admins can upload event thumbnails" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'event-thumbnails' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
+CREATE POLICY "Admins can update event thumbnails" ON storage.objects
+  FOR UPDATE USING (
+    bucket_id = 'event-thumbnails' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
+CREATE POLICY "Admins can delete event thumbnails" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'event-thumbnails' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
+-- 6. Admin WRITE (INSERT/UPDATE/DELETE) Policies for testimonial-photos
+CREATE POLICY "Admins can upload testimonial photos" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'testimonial-photos' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
+CREATE POLICY "Admins can update testimonial photos" ON storage.objects
+  FOR UPDATE USING (
+    bucket_id = 'testimonial-photos' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
+CREATE POLICY "Admins can delete testimonial photos" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'testimonial-photos' AND
+    auth.role() = 'authenticated' AND
+    public.check_is_admin(auth.uid())
+  );
+
 
