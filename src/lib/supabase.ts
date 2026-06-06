@@ -71,3 +71,13 @@ export interface BlogPost {
   is_published: boolean
   created_at: string
 }
+
+export interface GalleryImage {
+  id: string
+  storage_path: string
+  public_url: string
+  alt_text: string | null
+  is_hidden: boolean
+  display_order: number
+  created_at: string
+}

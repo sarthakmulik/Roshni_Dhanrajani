@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route, useLocation, Outlet } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { Toaster } from 'react-hot-toast'
@@ -32,10 +33,12 @@ import { AdminBookingsPage } from '@/pages/admin/BookingsPage'
 import { AdminTestimonialsPage } from '@/pages/admin/TestimonialsPage'
 import { AdminSettingsPage } from '@/pages/admin/SettingsPage'
 import { AdminBlogPage } from '@/pages/admin/BlogPage'
+import GalleryManagePage from '@/pages/admin/GalleryManagePage'
 
 // Blog / Journal
 import { BlogPage } from '@/pages/BlogPage'
 import { BlogPostPage } from '@/pages/BlogPostPage'
+import PublicGalleryPage from '@/pages/PublicGalleryPage'
 
 // Public layout (with navbar + footer) using Outlet for clean Layout Routing
 function PublicLayout() {
@@ -54,7 +57,16 @@ function PublicLayout() {
 
 export default function App() {
   const location = useLocation()
-  useLenis()
+  const lenis = useLenis()
+
+  // Scroll to top on route change
+  useEffect(() => {
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }, [location.pathname, lenis])
 
   return (
     <>
@@ -96,6 +108,7 @@ export default function App() {
             <Route path="/events" element={<EventsPage />} />
             <Route path="/journal" element={<BlogPage />} />
             <Route path="/journal/:slug" element={<BlogPostPage />} />
+            <Route path="/gallery" element={<PublicGalleryPage />} />
             <Route path="/book/:eventId" element={<BookingPage />} />
             <Route path="/book" element={<BookingPage />} />
             <Route
@@ -138,6 +151,14 @@ export default function App() {
             element={
               <AdminGuard>
                 <AdminBookingsPage />
+              </AdminGuard>
+            }
+          />
+          <Route
+            path="/admin/gallery"
+            element={
+              <AdminGuard>
+                <GalleryManagePage />
               </AdminGuard>
             }
           />

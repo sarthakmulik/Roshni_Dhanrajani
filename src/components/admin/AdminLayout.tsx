@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   FileText,
+  Image,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useState } from 'react'
@@ -18,6 +19,7 @@ const navItems = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: <LayoutDashboard size={18} /> },
   { label: 'Events', href: '/admin/events', icon: <Calendar size={18} /> },
   { label: 'Bookings', href: '/admin/bookings', icon: <BookOpen size={18} /> },
+  { label: 'Gallery', href: '/admin/gallery', icon: <Image size={18} /> },
   { label: 'Testimonials', href: '/admin/testimonials', icon: <MessageSquare size={18} /> },
   { label: 'Blog', href: '/admin/blog', icon: <FileText size={18} /> },
   { label: 'Settings', href: '/admin/settings', icon: <Settings size={18} /> },
