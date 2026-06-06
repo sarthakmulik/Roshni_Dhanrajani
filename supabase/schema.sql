@@ -126,7 +126,7 @@ BEGIN
       WHEN NEW.raw_user_meta_data IS NOT NULL THEN NEW.raw_user_meta_data->>'avatar_url'
       ELSE NULL
     END,
-    (NEW.email = 'sarthakmulik16@gmail.com') -- Automatically sets designated admin role
+    (NEW.email = 'dhanrajaniroshni29@gmail.com') -- Automatically sets designated admin role
   )
   ON CONFLICT (id) DO UPDATE SET
     email = EXCLUDED.email,
