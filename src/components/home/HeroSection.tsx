@@ -2,12 +2,14 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { scrambleText } from '@/lib/scramble'
 
 // Import hero image
 import heroImg from '/hero_pilates.png'
 
 export function HeroSection() {
   const bgRef = useRef<HTMLDivElement>(null)
+  const scrambleRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     const onScroll = () => {
@@ -18,6 +20,14 @@ export function HeroSection() {
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Text scramble on mount
+  useEffect(() => {
+    const el = scrambleRef.current
+    if (!el) return
+    const cancel = scrambleText(el, 'Transform.', 1100, 800)
+    return cancel
   }, [])
 
   const wordVariants = {
@@ -33,10 +43,11 @@ export function HeroSection() {
     }),
   }
 
-  const headline = ['Move.', 'Breathe.', 'Transform.']
+  const staticWords = ['Move.', 'Breathe.']
 
   return (
     <section
+      data-theme="dark"
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -65,7 +76,6 @@ export function HeroSection() {
             objectPosition: 'center top',
           }}
           onError={(e) => {
-            // Fallback to a gradient if image fails
             const target = e.currentTarget as HTMLImageElement
             target.style.display = 'none'
           }}
@@ -122,7 +132,7 @@ export function HeroSection() {
             </span>
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline — first two words animate in, last word scrambles */}
           <div style={{ overflow: 'hidden', perspective: '1000px' }}>
             <h1
               style={{
@@ -136,7 +146,7 @@ export function HeroSection() {
                 gap: '0.2em',
               }}
             >
-              {headline.map((word, i) => (
+              {staticWords.map((word, i) => (
                 <motion.span
                   key={word}
                   custom={i}
@@ -148,6 +158,21 @@ export function HeroSection() {
                   {word}
                 </motion.span>
               ))}
+              {/* Scramble word */}
+              <motion.span
+                custom={2}
+                variants={wordVariants}
+                initial="hidden"
+                animate="visible"
+                style={{ display: 'inline-block' }}
+              >
+                <span
+                  ref={scrambleRef}
+                  style={{ display: 'inline-block', minWidth: '3ch' }}
+                >
+                  Transform.
+                </span>
+              </motion.span>
             </h1>
           </div>
 
@@ -179,10 +204,19 @@ export function HeroSection() {
             transition={{ delay: 0.9, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}
           >
-            <a href="#events" className="btn-primary">
+            <a
+              href="#events"
+              className="btn-primary"
+              data-cursor="BOOK"
+            >
               Explore Events <ArrowRight size={16} />
             </a>
-            <Link to="/events" className="btn-outline" style={{ borderColor: 'rgba(255,255,255,0.5)', color: 'var(--color-white)' }}>
+            <Link
+              to="/events"
+              className="btn-outline"
+              style={{ borderColor: 'rgba(255,255,255,0.5)', color: 'var(--color-white)' }}
+              data-cursor="BOOK"
+            >
               Book Your Slot
             </Link>
           </motion.div>

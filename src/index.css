@@ -31,6 +31,111 @@
   --radius-full: 9999px;
 }
 
+/* ==================== PRELOADER ==================== */
+@keyframes pathDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes letterRise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes barFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes dotFade {
+  to { opacity: 1; }
+}
+
+.preloader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  transition: transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.preloader-overlay.preloader-exit {
+  transform: translateY(-100%);
+}
+
+/* SVG paths — stroke draw effect */
+.preloader-path {
+  stroke: var(--color-primary);
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: pathDraw 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* Wordmark */
+.preloader-wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(0.75rem, 3vw, 0.9rem);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: var(--color-text);
+  text-transform: uppercase;
+  overflow: hidden;
+}
+
+.preloader-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: letterRise 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Progress bar */
+.preloader-bar-track {
+  width: 120px;
+  height: 1.5px;
+  background: var(--color-soft);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.preloader-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--color-primary);
+  transform-origin: left;
+  transform: scaleX(0);
+  border-radius: var(--radius-full);
+  animation: barFill 1.4s cubic-bezier(0.65, 0, 0.35, 1) 200ms forwards;
+}
+
+/* Accessibility — honour reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .preloader-overlay {
+    transition: none;
+  }
+  .preloader-overlay.preloader-exit {
+    opacity: 0;
+    transform: none;
+  }
+  .preloader-path,
+  .preloader-letter,
+  .preloader-bar-fill {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
 /* ==================== RESET & BASE ==================== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -59,6 +164,17 @@ body {
 @media (hover: hover) and (pointer: fine) {
   *, *::before, *::after {
     cursor: none !important;
+  }
+
+  /* Restore readable text cursor on form inputs */
+  input, textarea, select {
+    cursor: text !important;
+  }
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  select {
+    cursor: pointer !important;
   }
 }
 
@@ -994,3 +1110,69 @@ input, textarea, select {
   }
 }
 
+/* ==================== MARQUEE TICKER ==================== */
+.marquee-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ==================== STICKY FOOTER REVEAL ==================== */
+#root > footer {
+  position: sticky;
+  bottom: 0;
+  z-index: -1;
+}
+
+#root > main, #root > div.page-content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-bg);
+  min-height: 100vh;
+}
+
+/* ==================== FORM MICRO-INTERACTIONS ==================== */
+.form-input:focus {
+  background: rgba(200,168,130,0.06);
+}
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary:hover::after {
+  transform: translateX(0);
+}
+
+/* ==================== STICKY FOOTER REVEAL ==================== */
+.sticky-footer-wrapper {
+  position: sticky;
+  bottom: 0;
+  z-index: -1;
+}
+
+@media (max-width: 768px) {
+  .sticky-footer-wrapper {
+    position: static;
+    z-index: auto;
+  }
+}

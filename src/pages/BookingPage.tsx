@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -179,7 +179,7 @@ function SuccessScreen({ bookingData }: { bookingData: Record<string, unknown> }
         ))}
       </div>
 
-      <a href="/" className="btn-primary">Back to Home</a>
+      <Link to="/" className="btn-primary">Back to Home</Link>
     </motion.div>
   )
 }
@@ -491,7 +491,7 @@ export function BookingPage() {
                           {e.title} — {new Date(e.date).toLocaleDateString('en-IN')} — ₹{e.price?.toLocaleString('en-IN')}
                         </option>
                       ))}
-                      {events.length === 0 && <option value="demo">Demo Event — ₹2,500</option>}
+                      {events.length === 0 && <option value="" disabled>No active events available</option>}
                     </FloatingSelect>
 
                     {/* Participants stepper */}

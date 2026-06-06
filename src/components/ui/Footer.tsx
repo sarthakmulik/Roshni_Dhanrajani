@@ -78,7 +78,6 @@ export function Footer() {
               { label: 'Journal', href: '/journal' },
               { label: 'About', href: '/#about' },
               { label: 'Book a Session', href: '/events' },
-              { label: 'Admin', href: '/admin' },
             ].map((link) => (
               <Link
                 key={link.label}
@@ -166,7 +165,7 @@ export function Footer() {
               color: 'rgba(255,255,255,0.35)',
             }}
           >
-            © 2025 Pulse It Out. Designed with ❤️ for Roshni Dhanrajani
+            © {new Date().getFullYear()} Pulse It Out. Designed with ❤️ for Roshni Dhanrajani
           </p>
           <p
             style={{

@@ -6,6 +6,10 @@ import { Footer } from '@/components/ui/Footer'
 import { CustomCursor } from '@/components/ui/CustomCursor'
 import { UserGuard, AdminGuard } from '@/components/auth/AuthGuard'
 import { useLenis } from '@/hooks/useLenis'
+import PulsePreloader from '@/components/PulsePreloader'
+import { ScrollProgress } from '@/components/ui/ScrollProgress'
+import { WhatsAppFloat } from '@/components/ui/WhatsAppFloat'
+import { SocialProofToast } from '@/components/ui/SocialProofToast'
 
 // Pages
 import { HomePage } from '@/pages/HomePage'
@@ -36,11 +40,15 @@ import { BlogPostPage } from '@/pages/BlogPostPage'
 // Public layout (with navbar + footer) using Outlet for clean Layout Routing
 function PublicLayout() {
   return (
-    <>
-      <Navbar />
-      <Outlet />
-      <Footer />
-    </>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div style={{ position: 'relative', zIndex: 1, background: 'var(--color-bg)', flex: 1 }}>
+        <Navbar />
+        <Outlet />
+      </div>
+      <div className="sticky-footer-wrapper">
+        <Footer />
+      </div>
+    </div>
   )
 }
 
@@ -50,7 +58,11 @@ export default function App() {
 
   return (
     <>
+      <PulsePreloader />
+      <ScrollProgress />
       <CustomCursor />
+      <WhatsAppFloat />
+      <SocialProofToast />
 
       <Toaster
         position="top-right"

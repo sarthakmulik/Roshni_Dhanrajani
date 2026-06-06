@@ -163,7 +163,7 @@ export function DashboardPage() {
   }
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return new Date(dateStr).toLocaleDateString('en-IN', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -369,7 +369,15 @@ export function DashboardPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                       {bookings.map((booking) => {
                         const event = booking.events
-                        if (!event) return null
+                        if (!event) return (
+                          <div key={booking.id} style={{ background: 'white', border: '1px solid var(--color-soft)', borderRadius: '16px', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: 0.5 }}>
+                            <div>
+                              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.8rem', fontWeight: 600, color: 'rgba(44,36,32,0.4)' }}>Event details unavailable</div>
+                              <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(44,36,32,0.3)', marginTop: '4px' }}>{booking.participants} spot{booking.participants > 1 ? 's' : ''} • ₹{booking.total_price}</div>
+                            </div>
+                            <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'capitalize', color: 'rgba(44,36,32,0.35)' }}>{booking.status}</span>
+                          </div>
+                        )
 
                         const isUpcoming = new Date(event.date) > new Date()
                         const statusColors = {

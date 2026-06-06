@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Edit2, Trash2, X, Check, ToggleLeft, ToggleRight, Upload, Image as ImageIcon } from 'lucide-react'
+import { Plus, Edit2, Trash2, X, Check, Upload, Image as ImageIcon } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { supabase, type Event } from '@/lib/supabase'
 import { AdminLayout } from '@/components/admin/AdminLayout'
@@ -388,8 +388,6 @@ export function AdminEventsPage() {
         </div>
       )}
 
-      {/* Keep ToggleLeft/ToggleRight in scope */}
-      <span style={{ display: 'none' }}><ToggleLeft /><ToggleRight /></span>
     </AdminLayout>
   )
 }

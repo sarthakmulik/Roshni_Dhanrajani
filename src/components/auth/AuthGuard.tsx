@@ -30,9 +30,8 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) return <Navigate to="/admin/login" replace />
-  if (profile && !profile.is_admin) return <Navigate to="/" replace />
 
-  // Still loading profile — wait
+  // Still loading profile — wait before making access decisions
   if (!profile) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-text)' }}>
@@ -40,6 +39,8 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
       </div>
     )
   }
+
+  if (!profile.is_admin) return <Navigate to="/" replace />
 
   return <>{children}</>
 }

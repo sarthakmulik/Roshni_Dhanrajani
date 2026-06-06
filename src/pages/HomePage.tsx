@@ -7,10 +7,13 @@ import { Testimonials } from '@/components/home/Testimonials'
 import { GalleryStrip } from '@/components/home/GalleryStrip'
 import { BlogTeaser } from '@/components/home/BlogTeaser'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
+import { useImageReveal } from '@/hooks/useImageReveal'
 import { PageTransition } from '@/components/ui/PageTransition'
+import { MarqueeTicker } from '@/components/ui/MarqueeTicker'
 
 export function HomePage() {
   useScrollReveal()
+  useImageReveal()
 
   useEffect(() => {
     document.title = 'Pulse It Out | Premium Pilates by Roshni Dhanrajani'
@@ -21,6 +24,7 @@ export function HomePage() {
       <main>
         <HeroSection />
         <StatsStrip />
+        <MarqueeTicker />
         <AboutSection />
         <EventsPreview />
         <Testimonials />
