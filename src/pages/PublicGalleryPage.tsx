@@ -70,18 +70,18 @@ export default function PublicGalleryPage() {
         <div className="container max-w-7xl">
           
           {/* Header */}
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <div className="flex items-center justify-center gap-4 mb-6 reveal">
-              <div className="gold-rule-short" />
-              <span className="text-primary tracking-[0.25em] text-xs font-bold uppercase font-heading">
+          <div className="text-center max-w-4xl mx-auto mb-20 md:mb-24 px-4">
+            <div className="flex items-center justify-center gap-6 mb-8 reveal">
+              <div className="w-12 md:w-20 h-px bg-primary/40" />
+              <span className="text-primary tracking-[0.3em] text-[10px] md:text-xs font-semibold uppercase font-heading">
                 Studio Gallery
               </span>
-              <div className="gold-rule-short" />
+              <div className="w-12 md:w-20 h-px bg-primary/40" />
             </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-medium mb-8 text-text reveal reveal-delay-1 leading-tight">
-              Moments at <br /> Pulse It Out
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium mb-8 text-text reveal reveal-delay-1 leading-tight tracking-tight">
+              Moments at Pulse It Out
             </h1>
-            <p className="text-text-secondary text-lg md:text-xl reveal reveal-delay-2 font-light max-w-2xl mx-auto leading-relaxed">
+            <p className="text-text-secondary/80 text-base md:text-lg reveal reveal-delay-2 font-light max-w-xl mx-auto leading-relaxed">
               A glimpse into our mindful movement practice, equipment, and community. Discover the energy of our studio.
             </p>
           </div>
