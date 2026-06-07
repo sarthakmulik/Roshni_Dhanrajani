@@ -16,6 +16,7 @@ function getFirstName(fullName: string): string {
 const INTERVAL_MS = 45000 // 45 seconds
 
 export function SocialProofToast() {
+  console.log("SocialProofToast v2 (Single Display Per Session) Loaded.");
   const [booking, setBooking] = useState<BookingSnippet | null>(null)
   const [visible, setVisible] = useState(false)
   const [dismissed, setDismissed] = useState(() => {
