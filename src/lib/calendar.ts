@@ -19,14 +19,15 @@ export const getGoogleCalendarUrl = (
   title: string,
   description: string,
   dateStr: string,
-  location: string,
+  location: string | null,
   durationMinutes = 60
 ): string => {
   try {
     const start = new Date(dateStr);
     const end = new Date(start.getTime() + durationMinutes * 60000);
     const dates = `${formatGoogleDate(start)}/${formatGoogleDate(end)}`;
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${dates}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}`;
+    const eventLoc = location || '';
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${dates}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(eventLoc)}`;
   } catch (err) {
     console.error('Error generating Google Calendar URL:', err);
     return '#';
@@ -40,13 +41,14 @@ export const downloadIcsFile = (
   title: string,
   description: string,
   dateStr: string,
-  location: string,
+  location: string | null,
   durationMinutes = 60
 ): void => {
   try {
     const start = new Date(dateStr);
     const end = new Date(start.getTime() + durationMinutes * 60000);
     const stamp = formatIcsDate(new Date());
+    const eventLoc = location || '';
 
     const icsContent = [
       'BEGIN:VCALENDAR',
@@ -60,7 +62,7 @@ export const downloadIcsFile = (
       `DTEND:${formatIcsDate(end)}`,
       `SUMMARY:${title}`,
       `DESCRIPTION:${description.replace(/\n/g, '\\n')}`,
-      `LOCATION:${location}`,
+      `LOCATION:${eventLoc}`,
       'END:VEVENT',
       'END:VCALENDAR'
     ].join('\r\n');

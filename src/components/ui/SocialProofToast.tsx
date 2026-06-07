@@ -30,7 +30,7 @@ export function SocialProofToast() {
         .maybeSingle()
 
       if (error || !data) return
-      setBooking(data)
+      setBooking(data as BookingSnippet)
     } catch {
       // Silently fail
     }
