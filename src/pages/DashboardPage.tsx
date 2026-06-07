@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar, MapPin, User, Settings, LogOut, ChevronRight, CheckCircle2, Clock, XCircle, ShieldCheck } from 'lucide-react'
+import { getGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 
 interface BookingWithEvent {
   id: string
@@ -455,6 +456,79 @@ export function DashboardPage() {
                                     <span>{event.location}</span>
                                   </div>
                                 </div>
+
+                                {isUpcoming && booking.status !== 'cancelled' && (
+                                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', margin: '12px 0 4px 0' }}>
+                                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '0.72rem', fontWeight: 600, color: 'rgba(44,36,32,0.4)', alignSelf: 'center', marginRight: '4px' }}>
+                                      Add to Calendar:
+                                    </span>
+                                    <a
+                                      href={getGoogleCalendarUrl(
+                                        event.title,
+                                        'Pilates session at Pulse It Out',
+                                        event.date,
+                                        event.location
+                                      )}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{
+                                        padding: '6px 12px',
+                                        fontSize: '0.72rem',
+                                        fontWeight: 600,
+                                        color: 'var(--color-primary)',
+                                        background: 'rgba(200,168,130,0.08)',
+                                        border: '1px solid rgba(200,168,130,0.18)',
+                                        borderRadius: '20px',
+                                        textDecoration: 'none',
+                                        fontFamily: 'var(--font-heading)',
+                                        letterSpacing: '0.02em',
+                                        transition: 'all 0.2s',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        cursor: 'none'
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = 'rgba(200,168,130,0.15)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = 'rgba(200,168,130,0.08)';
+                                      }}
+                                    >
+                                      Google
+                                    </a>
+                                    <button
+                                      onClick={() => downloadIcsFile(
+                                        event.title,
+                                        'Pilates session at Pulse It Out',
+                                        event.date,
+                                        event.location
+                                      )}
+                                      style={{
+                                        padding: '6px 12px',
+                                        fontSize: '0.72rem',
+                                        fontWeight: 600,
+                                        color: 'var(--color-primary)',
+                                        background: 'rgba(200,168,130,0.08)',
+                                        border: '1px solid rgba(200,168,130,0.18)',
+                                        borderRadius: '20px',
+                                        fontFamily: 'var(--font-heading)',
+                                        letterSpacing: '0.02em',
+                                        cursor: 'none',
+                                        transition: 'all 0.2s',
+                                        display: 'inline-flex',
+                                        alignItems: 'center'
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = 'rgba(200,168,130,0.15)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = 'rgba(200,168,130,0.08)';
+                                      }}
+                                    >
+                                      Apple / Outlook
+                                    </button>
+                                  </div>
+                                )}
                               </div>
 
                               <div className="booking-card-footer">

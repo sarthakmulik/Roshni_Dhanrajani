@@ -4,12 +4,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, ChevronRight, ChevronLeft, Minus, Plus, AlertCircle } from 'lucide-react'
+import { Check, ChevronRight, ChevronLeft, Minus, Plus, AlertCircle, Calendar } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import canvasConfetti from 'canvas-confetti'
 import { supabase, type Event } from '@/lib/supabase'
 import { PageTransition } from '@/components/ui/PageTransition'
 import { useAuth } from '@/context/AuthContext'
+import { getGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 
 // Validation schemas
 const step1Schema = z.object({
@@ -83,7 +84,7 @@ function FloatingSelect({ id, label, error, children, ...props }: {
   )
 }
 
-function SuccessScreen({ bookingData }: { bookingData: Record<string, unknown> }) {
+function SuccessScreen({ bookingData, event }: { bookingData: Record<string, unknown>; event: Event | null }) {
   useEffect(() => {
     const fire = () => {
       canvasConfetti({
@@ -178,6 +179,100 @@ function SuccessScreen({ bookingData }: { bookingData: Record<string, unknown> }
           </div>
         ))}
       </div>
+
+      {event && (
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '360px',
+            background: 'var(--color-white)',
+            border: '1px solid rgba(200,168,130,0.25)',
+            borderRadius: '12px',
+            padding: '20px 24px',
+            textAlign: 'left',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            boxShadow: '0 4px 12px rgba(44,36,32,0.02)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Calendar size={16} color="var(--color-primary)" />
+            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--color-text)' }}>
+              Add to Calendar
+            </span>
+          </div>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'rgba(44,36,32,0.6)', margin: 0, lineHeight: 1.4 }}>
+            Save this session to your calendar to receive reminders.
+          </p>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
+            <a
+              href={getGoogleCalendarUrl(
+                event.title,
+                event.description || 'Pilates session at Pulse It Out',
+                event.date,
+                event.location
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                flex: 1,
+                textAlign: 'center',
+                padding: '10px',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: 'var(--color-text)',
+                background: 'var(--color-soft)',
+                border: '1px solid rgba(200,168,130,0.15)',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-heading)',
+                letterSpacing: '0.02em',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(200,168,130,0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--color-soft)';
+              }}
+            >
+              Google Calendar
+            </a>
+            <button
+              onClick={() => downloadIcsFile(
+                event.title,
+                event.description || 'Pilates session at Pulse It Out',
+                event.date,
+                event.location
+              )}
+              style={{
+                flex: 1,
+                padding: '10px',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: 'var(--color-text)',
+                background: 'var(--color-soft)',
+                border: '1px solid rgba(200,168,130,0.15)',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-heading)',
+                letterSpacing: '0.02em',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(200,168,130,0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--color-soft)';
+              }}
+            >
+              Apple / Outlook
+            </button>
+          </div>
+        </div>
+      )}
 
       <Link to="/" className="btn-primary">Back to Home</Link>
     </motion.div>
@@ -359,7 +454,7 @@ export function BookingPage() {
   if (success) {
     return (
       <div style={{ paddingTop: '72px', minHeight: '100vh', background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <SuccessScreen bookingData={bookingData} />
+        <SuccessScreen bookingData={bookingData} event={selectedEvent} />
       </div>
     )
   }
