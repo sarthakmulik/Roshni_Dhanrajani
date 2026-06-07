@@ -101,7 +101,23 @@ BEGIN
     WHERE id = user_id AND is_admin = true
   );
 END;
+-- Security definer helper to securely fetch latest confirmed booking for public social proof toast
+CREATE OR REPLACE FUNCTION public.get_latest_booking_toast()
+RETURNS TABLE (full_name TEXT, city TEXT, created_at TIMESTAMPTZ) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    split_part(b.full_name, ' ', 1) as full_name, 
+    b.city, 
+    b.created_at
+  FROM public.bookings b
+  WHERE b.status = 'confirmed'
+  ORDER BY b.created_at DESC
+  LIMIT 1;
+END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION public.get_latest_booking_toast() TO anon, authenticated;
 
 -- =============================================
 -- PL/pgSQL TRIGGERS AND CORE FUNCTIONS

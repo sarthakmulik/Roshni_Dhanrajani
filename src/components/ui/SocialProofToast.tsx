@@ -25,11 +25,7 @@ export function SocialProofToast() {
   const fetchLatestBooking = useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from('bookings')
-        .select('full_name, city, created_at')
-        .eq('status', 'confirmed')
-        .order('created_at', { ascending: false })
-        .limit(1)
+        .rpc('get_latest_booking_toast')
         .maybeSingle()
 
       if (error || !data) return
