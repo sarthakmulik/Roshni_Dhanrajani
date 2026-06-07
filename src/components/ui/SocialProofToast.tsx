@@ -45,6 +45,8 @@ export function SocialProofToast() {
     // Delay first toast by 8 seconds
     const firstTimer = setTimeout(() => {
       setVisible(true)
+      setDismissed(true)
+      sessionStorage.setItem('social_proof_dismissed', 'true')
     }, 8000)
 
     return () => clearTimeout(firstTimer)
@@ -52,11 +54,9 @@ export function SocialProofToast() {
 
   useEffect(() => {
     if (!visible) return
-    // Auto-hide after 6 seconds and mark as dismissed for this session
+    // Auto-hide after 6 seconds
     const hideTimer = setTimeout(() => {
       setVisible(false)
-      setDismissed(true)
-      sessionStorage.setItem('social_proof_dismissed', 'true')
     }, 6000)
     return () => clearTimeout(hideTimer)
   }, [visible])
@@ -69,7 +69,7 @@ export function SocialProofToast() {
 
   return (
     <AnimatePresence>
-      {visible && !dismissed && (
+      {visible && (
         <motion.div
           initial={{ opacity: 0, x: -40, y: 10 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
@@ -142,8 +142,6 @@ export function SocialProofToast() {
           <button
             onClick={() => {
               setVisible(false)
-              setDismissed(true)
-              sessionStorage.setItem('social_proof_dismissed', 'true')
             }}
             style={{
               background: 'none',
