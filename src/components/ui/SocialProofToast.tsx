@@ -18,7 +18,9 @@ const INTERVAL_MS = 45000 // 45 seconds
 export function SocialProofToast() {
   const [booking, setBooking] = useState<BookingSnippet | null>(null)
   const [visible, setVisible] = useState(false)
-  const [dismissed, setDismissed] = useState(false)
+  const [dismissed, setDismissed] = useState(() => {
+    return !!sessionStorage.getItem('social_proof_dismissed')
+  })
 
   const fetchLatestBooking = useCallback(async () => {
     try {
@@ -54,21 +56,14 @@ export function SocialProofToast() {
 
   useEffect(() => {
     if (!visible) return
-    // Auto-hide after 6 seconds
-    const hideTimer = setTimeout(() => setVisible(false), 6000)
+    // Auto-hide after 6 seconds and mark as dismissed for this session
+    const hideTimer = setTimeout(() => {
+      setVisible(false)
+      setDismissed(true)
+      sessionStorage.setItem('social_proof_dismissed', 'true')
+    }, 6000)
     return () => clearTimeout(hideTimer)
   }, [visible])
-
-  useEffect(() => {
-    if (!booking || dismissed) return
-
-    // Repeat every 45s
-    const interval = setInterval(() => {
-      setVisible(true)
-    }, INTERVAL_MS)
-
-    return () => clearInterval(interval)
-  }, [booking, dismissed])
 
   if (!booking) return null
 
@@ -149,7 +144,11 @@ export function SocialProofToast() {
           </div>
 
           <button
-            onClick={() => { setVisible(false); setDismissed(true) }}
+            onClick={() => {
+              setVisible(false)
+              setDismissed(true)
+              sessionStorage.setItem('social_proof_dismissed', 'true')
+            }}
             style={{
               background: 'none',
               border: 'none',
